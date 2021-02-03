@@ -2,6 +2,13 @@
 name = "vsr-new"
 version = "0.1.0"
 authors = ["Jhonatan Macazana <46355455+jhonatanmacazana@users.noreply.github.com>"]
+license = "MIT"
+description = "Tool for creating projects based on templates repo"
+readme = "README.md"
+homepage = "https://github.com/jhonatanmacazana/vsr-new"
+respository = "https://github.com/jhonatanmacazana/vsr-new"
+keywords = ["cli", "boilerplates", "vscode", "templates", "github"]
+categories = ["command-line-utilities", "config", "filesystem"]
 edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
