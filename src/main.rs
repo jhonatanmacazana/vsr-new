@@ -2,7 +2,9 @@ use exitfailure::ExitFailure;
 use reqwest::header::USER_AGENT;
 use reqwest::Url;
 use serde_derive::{Deserialize, Serialize};
+use std::fs;
 use structopt::StructOpt;
+use termion::color;
 
 #[derive(StructOpt)]
 struct Cli {
@@ -69,11 +71,10 @@ async fn main() -> Result<(), ExitFailure> {
     let args = Cli::from_args();
     if args.types {
         let gh_response = GHResponse {};
-        println!("Fetching available types...");
+        println!("{}Fetching available types...", color::Fg(color::LightRed));
         let _resp = gh_response.get_types().await?;
-        println!("-----");
         for elem in _resp {
-            println!("{}", elem);
+            println!("{}{}", color::Fg(color::LightBlue), elem);
         }
         return Ok(());
     }
@@ -81,6 +82,8 @@ async fn main() -> Result<(), ExitFailure> {
         "City: {:?}. CC: {:?}. F: {}",
         args.template_type, args.new_app, args.types
     );
+
+    fs::create_dir_all(args.new_app.unwrap())?;
 
     Ok(())
 }
