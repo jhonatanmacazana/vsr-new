@@ -1,0 +1,71 @@
+name: Release
+
+on: push
+
+jobs: 
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          default: true
+          override: true
+      - name: Build project
+        run: cargo build --all --release && strip target/release/vsr-new && mv target/release/vsr-new target/release/vsr-new_amd64
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, "refs/tags/")
+        with:
+          files: |
+            target/release/vsr-new_amd64
+        env: 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+  build-win:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          default: true
+          override: true
+      - name: Build project
+        run: cargo build --all --release
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, "refs/tags/")
+        with:
+          files: |
+            target/release/vsr-new.exe
+        env: 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+  build-mac:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: x86_64-apple-darwin
+          default: true
+          override: true
+      - name: Build project
+        run: cargo build --all --release && strip target/release/vsr-new && mv target/release/vsr-new target/release/vsr-new_darwin
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, "refs/tags/")
+        with:
+          files: |
+            target/release/vsr-new_darwin
+        env: 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
