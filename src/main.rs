@@ -34,7 +34,7 @@ struct Details {
 
 impl GHResponse {
     async fn get_types(&self) -> Result<Vec<String>, ExitFailure> {
-        let content = self.get_content(&"/".to_string()).await?;
+        let content = self.get_content("/").await?;
 
         let mut types = vec![];
         for elem in content {
@@ -45,7 +45,7 @@ impl GHResponse {
         }
         Ok(types)
     }
-    async fn get_content(&self, endpoint: &String) -> Result<Vec<Details>, ExitFailure> {
+    async fn get_content(&self, endpoint: &str) -> Result<Vec<Details>, ExitFailure> {
         let url_str = format!(
             "https://api.github.com/repos/jhonatanmacazana/vscode-boilerplates/contents{}",
             endpoint
