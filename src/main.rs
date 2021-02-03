@@ -73,8 +73,8 @@ impl BpHandler {
         web_content_path: &str,
         parent_folder_path: &str,
     ) -> Result<(), ExitFailure> {
-        create_dir_all(parent_folder_path)?;
         let path_content = self.get_content(&web_content_path).await?;
+        create_dir_all(parent_folder_path)?;
         for elem in path_content {
             let file_path = format!("{}/{}", parent_folder_path, elem.name);
             if elem.r#type == "file" {
@@ -131,17 +131,18 @@ async fn main() -> Result<(), ExitFailure> {
 
     let gh_response = BpHandler {};
 
-    println!(
-        "{}Fetching available types...",
-        color::Fg(color::LightGreen)
-    );
-
     let template_type = args.template_type.unwrap();
     let new_app = args.new_app.unwrap();
-    println!("{}Creating {}", color::Fg(color::LightGreen), new_app);
+    print!("{}Creating ", color::Fg(color::Reset));
+    print!("{}{} ", color::Fg(color::LightGreen), new_app);
+    print!("{}of type ", color::Fg(color::Reset));
+    print!("{}{}", color::Fg(color::LightGreen), template_type);
+    println!("{}", color::Fg(color::Red));
+    println!("");
     gh_response
         .create_dir_from_template(&template_type, &new_app)
-        .await?;
+        .await
+        .expect("There was an error creating the custom template");
 
     Ok(())
 }
