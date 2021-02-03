@@ -18,7 +18,7 @@ jobs:
         run: cargo build --all --release && strip target/release/vsr-new && mv target/release/vsr-new target/release/vsr-new_amd64
       - name: Release
         uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, "refs/tags/")
+        if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
             target/release/vsr-new_amd64
@@ -40,7 +40,7 @@ jobs:
         run: cargo build --all --release
       - name: Release
         uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, "refs/tags/")
+        if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
             target/release/vsr-new.exe
@@ -63,7 +63,7 @@ jobs:
         run: cargo build --all --release && strip target/release/vsr-new && mv target/release/vsr-new target/release/vsr-new_darwin
       - name: Release
         uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, "refs/tags/")
+        if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
             target/release/vsr-new_darwin
