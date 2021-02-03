@@ -1,71 +1,80 @@
 name: Release
 
-on: push
+on:
+  push:
+    # tags:
+    #   - 'v*.*.*'
+
+env:
+  RELEASE_BIN: vsr-new
+  RELEASE_ADDS: README.md LICENSE
 
 jobs: 
   build:
-    runs-on: ubuntu-latest
+    name: Build release
+
+    # runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        build: [linux, macos, windows]
+        include:
+          - build: linux
+            os: ubuntu-latest
+            rust: stable
+            suffix: amd64
+          - build: macos
+            os: macos-latest
+            rust: stable
+            suffix: darwin
+          - build: windows
+            os: windows-latest
+            rust: stable
+            suffix: w32-64
+
 
     steps:
       - uses: actions/checkout@v2
+
       - name: Rust toolchain
         uses: actions-rs/toolchain@v1
+        if: matrix.os != 'macos-latest'
         with:
           toolchain: stable
           default: true
           override: true
-      - name: Build project
-        run: cargo build --all --release && strip target/release/vsr-new && mv target/release/vsr-new target/release/vsr-new_amd64
-      - name: Release
-        uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
-        with:
-          files: |
-            target/release/vsr-new_amd64
-        env: 
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
-  build-win:
-    runs-on: windows-latest
 
-    steps:
-      - uses: actions/checkout@v2
-      - name: Rust toolchain
+      - name: Rust toolchain - macos
         uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          default: true
-          override: true
-      - name: Build project
-        run: cargo build --all --release
-      - name: Release
-        uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
-        with:
-          files: |
-            target/release/vsr-new.exe
-        env: 
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
-  build-mac:
-    runs-on: macos-latest
-
-    steps:
-      - uses: actions/checkout@v2
-      - name: Rust toolchain
-        uses: actions-rs/toolchain@v1
+        if: matrix.os == 'macos-latest'
         with:
           toolchain: stable
           target: x86_64-apple-darwin
           default: true
           override: true
+
       - name: Build project
-        run: cargo build --all --release && strip target/release/vsr-new && mv target/release/vsr-new target/release/vsr-new_darwin
+        if: matrix.os != 'windows-latest'
+        run: cargo build --all --release && strip target/release/${{ env.RELEASE_BIN }} && mv target/release/${{ env.RELEASE_BIN }} target/release/${{ env.RELEASE_BIN }}_${{ matrix.suffix }}
+      
+      - name: Build project - windows
+        if: matrix.os == 'windows-latest'
+        run: cargo build --all --release
+
       - name: Release
         uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
-        with:
-          files: |
-            target/release/vsr-new_darwin
+        if: matrix.os != 'windows-latest'
         env: 
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          files: |
+            target/release/${{ env.RELEASE_BIN }}_${{ matrix.suffix }}
+      
+      - name: Release - windows
+        uses: softprops/action-gh-release@v1
+        if: matrix.os == 'windows-latest'
+        env: 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          files: |
+            target/release/${{ env.RELEASE_BIN }}.exe
