@@ -121,7 +121,7 @@ async fn main() -> Result<(), ExitFailure> {
 
     if args.types {
         let gh_response = BpHandler {};
-        println!("{}Fetching available types...", color::Fg(color::LightRed));
+        println!("{}Fetching available types...", color::Fg(color::Reset));
         let _resp = gh_response.get_types().await?;
         for elem in _resp {
             println!("{}{}", color::Fg(color::LightBlue), elem);
