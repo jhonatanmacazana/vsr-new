@@ -136,8 +136,8 @@ async fn main() -> Result<(), ExitFailure> {
 
     print!("{} ", "Creating");
     print!("{} ", new_app.clone().green());
-    print!("{} ", "of type");
-    print!("{} ", template_type.clone().green());
+    print!("{} ", "project of type");
+    println!("{} ", template_type.clone().green());
     println!("");
     gh_response
         .create_dir_from_template(&template_type, &new_app)
