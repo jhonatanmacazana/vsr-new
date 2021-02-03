@@ -1,4 +1,5 @@
 use async_recursion::async_recursion;
+use crossterm::style::Colorize;
 use exitfailure::ExitFailure;
 use reqwest::header::USER_AGENT;
 use reqwest::Url;
@@ -6,7 +7,6 @@ use serde_derive::{Deserialize, Serialize};
 use std::fs::{create_dir_all, File};
 use std::io;
 use structopt::StructOpt;
-use termion::color;
 
 #[derive(StructOpt)]
 struct Cli {
@@ -108,8 +108,8 @@ impl BpHandler {
         let mut slice: &[u8] = bytes.as_ref();
 
         io::copy(&mut slice, &mut out)?;
-        print!("{}  created ", color::Fg(color::Cyan));
-        println!("{}: {}", color::Fg(color::Reset), path_file);
+        print!("  {} ", "created".cyan());
+        println!(": {}", path_file);
 
         Ok(())
     }
@@ -121,10 +121,10 @@ async fn main() -> Result<(), ExitFailure> {
 
     if args.types {
         let gh_response = BpHandler {};
-        println!("{}Fetching available types...", color::Fg(color::Reset));
+        println!("Fetching available types...");
         let _resp = gh_response.get_types().await?;
         for elem in _resp {
-            println!("{}{}", color::Fg(color::LightBlue), elem);
+            println!("{} ", elem.blue());
         }
         return Ok(());
     }
@@ -133,11 +133,11 @@ async fn main() -> Result<(), ExitFailure> {
 
     let template_type = args.template_type.unwrap();
     let new_app = args.new_app.unwrap();
-    print!("{}Creating ", color::Fg(color::Reset));
-    print!("{}{} ", color::Fg(color::LightGreen), new_app);
-    print!("{}of type ", color::Fg(color::Reset));
-    print!("{}{}", color::Fg(color::LightGreen), template_type);
-    println!("{}", color::Fg(color::Red));
+
+    print!("{} ", "Creating");
+    print!("{} ", new_app.clone().green());
+    print!("{} ", "of type");
+    print!("{} ", template_type.clone().green());
     println!("");
     gh_response
         .create_dir_from_template(&template_type, &new_app)
