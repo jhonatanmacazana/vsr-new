@@ -6,8 +6,14 @@ use structopt::StructOpt;
 
 #[derive(StructOpt)]
 struct Cli {
-    city: String,
-    country_code: String,
+    #[structopt(short, long)]
+    types: bool,
+
+    #[structopt(required_unless("types"))]
+    template_type: Option<String>,
+
+    #[structopt(required_unless("types"))]
+    new_app: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -49,7 +55,7 @@ impl GHResponse {
         let client = reqwest::Client::new();
         let resp = client
             .get(url)
-            .header(USER_AGENT, "vsr-new app")
+            .header(USER_AGENT, "vsr-new rust app")
             .send()
             .await?;
         let txt = resp.text().await?;
@@ -61,12 +67,20 @@ impl GHResponse {
 #[tokio::main]
 async fn main() -> Result<(), ExitFailure> {
     let args = Cli::from_args();
-    println!("City: {}. CC: {}.", args.city, args.country_code);
-
-    let gh_response = GHResponse {};
-    let _resp = gh_response.get_types().await?;
-    for elem in _resp {
-        println!("{}", elem);
+    if args.types {
+        let gh_response = GHResponse {};
+        println!("Fetching available types...");
+        let _resp = gh_response.get_types().await?;
+        println!("-----");
+        for elem in _resp {
+            println!("{}", elem);
+        }
+        return Ok(());
     }
+    println!(
+        "City: {:?}. CC: {:?}. F: {}",
+        args.template_type, args.new_app, args.types
+    );
+
     Ok(())
 }
