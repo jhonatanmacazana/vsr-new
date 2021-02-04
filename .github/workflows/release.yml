@@ -52,7 +52,7 @@ jobs:
           override: true
 
       - name: Build project - Linux
-        if: matrix.build != 'linux'
+        if: matrix.build == 'linux'
         run: |
           cargo build --all --release 
           strip target/release/${{ env.RELEASE_BIN }} 
