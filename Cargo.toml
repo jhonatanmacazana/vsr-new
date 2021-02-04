@@ -1,6 +1,6 @@
 [package]
 name = "vsr-new"
-version = "0.1.2"
+version = "0.1.3"
 authors = ["Jhonatan Macazana <46355455+jhonatanmacazana@users.noreply.github.com>"]
 license = "MIT"
 description = "Tool for creating projects based on templates repo"
@@ -11,7 +11,8 @@ keywords = ["cli", "boilerplates", "vscode", "templates", "github"]
 categories = ["command-line-utilities", "config", "filesystem"]
 edition = "2018"
 exclude = [
-  ".github/*"
+  ".github/*",
+  "CHANGELOG.md"
 ]
 
 [dependencies]
