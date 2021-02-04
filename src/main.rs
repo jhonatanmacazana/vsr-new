@@ -134,11 +134,11 @@ async fn main() -> Result<(), ExitFailure> {
     let template_type = args.template_type.unwrap();
     let new_app = args.new_app.unwrap();
 
-    print!("{} ", "Creating");
+    print!("Creating ");
     print!("{} ", new_app.clone().green());
-    print!("{} ", "project of type");
+    print!("project of type ");
     println!("{} ", template_type.clone().green());
-    println!("");
+    println!();
     gh_response
         .create_dir_from_template(&template_type, &new_app)
         .await
