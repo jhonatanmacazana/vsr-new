@@ -48,7 +48,7 @@ jobs:
         if: matrix.build == 'windows'
         with:
           toolchain: stable
-          target: x86_64-pc-windows-gnu i686-pc-windows-gnu
+          target: x86_64-pc-windows-gnu,i686-pc-windows-gnu
           default: true
           override: true
 
@@ -57,7 +57,7 @@ jobs:
         run: |
           cargo build --all --release 
           strip target/release/${{ env.RELEASE_BIN }} 
-          mkdir -p builds/${{ env.RELEASE_BIN }}-${{ matrix.suffix }}
+          mkdir -p builds/${{ env.RELEASE_BIN }}-${{ matrix.suffix }} dist
           cp target/release/${{ env.RELEASE_BIN }} builds/${{ env.RELEASE_BIN }}-${{ matrix.suffix }}
           tar -C builds -czvf dist/${{ env.RELEASE_BIN }}-${{ matrix.suffix }}.tar.gz ${{env.RELEASE_BIN }}-${{ matrix.suffix }}
 
@@ -65,7 +65,7 @@ jobs:
         if: matrix.build == 'windows'
         run: |
           cargo rustc --release --target=x86_64-pc-windows-gnu
-          mkdir -p builds/${{ env.RELEASE_BIN }}-win64
+          mkdir -p builds/${{ env.RELEASE_BIN }}-win64 dist
           cp target/x86_64-pc-windows-gnu/release/${{ env.RELEASE_BIN }}.exe builds/${{ env.RELEASE_BIN }}-win64
           tar -C builds -czvf dist/${{ env.RELEASE_BIN }}-win64.tar.gz ${{ env.RELEASE_BIN }}-win64
       
@@ -73,7 +73,7 @@ jobs:
         if: matrix.build == 'windows'
         run: |
           cargo rustc --release --target=i686-pc-windows-gnu
-          mkdir -p builds/${{ env.RELEASE_BIN }}-win32
+          mkdir -p builds/${{ env.RELEASE_BIN }}-win32 dist
           cp target/i686-pc-windows-gnu/release/${{ env.RELEASE_BIN }}.exe builds/${{ env.RELEASE_BIN }}-win32
           tar -C builds -czvf dist/${{ env.RELEASE_BIN }}-win32.tar.gz ${{ env.RELEASE_BIN }}-win32
 
@@ -103,7 +103,7 @@ jobs:
           export CC=o64-clang
           export CXX=o64-clang++
           cargo build --release --target "x86_64-apple-darwin"
-          mkdir builds/${{ env.RELEASE_BIN }}-${{ matrix.suffix }}
+          mkdir builds/${{ env.RELEASE_BIN }}-${{ matrix.suffix }} dist
           cp target/x86_64-apple-darwin/release/${{ env.RELEASE_BIN }} builds/${{ env.RELEASE_BIN }}-${{ matrix.suffix }}
           tar -C builds -czvf dist/${{ env.RELEASE_BIN }}-${{ matrix.suffix }}.tar.gz ${{ env.RELEASE_BIN }}-${{ matrix.suffix }}
 
