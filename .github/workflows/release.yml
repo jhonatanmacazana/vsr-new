@@ -12,22 +12,22 @@ env:
 jobs: 
   build:
     name: Build release
-    runs-on: ${{ matrix.build }}
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         build: [linux, macos, windows]
         include:
           - build: linux
-            os: ubuntu-latest
+            os: ubuntu-20.04
             rust: stable
             suffix: linux
           - build: macos
-            os: ubuntu-latest
+            os: ubuntu-20.04
             rust: stable
             suffix: macos
           - build: windows
-            os: windows-latest
+            os: windows-2019
             rust: stable
             suffix: win64
 
