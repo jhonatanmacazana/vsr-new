@@ -13,9 +13,9 @@ jobs:
   build:
     name: Build release
 
-    # runs-on: ubuntu-latest
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         build: [linux, macos, windows]
         include:
@@ -35,8 +35,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-
-      - name: Rust toolchain
+      - name: Rust toolchain - linux - windows
         uses: actions-rs/toolchain@v1
         if: matrix.os != 'macos-latest'
         with:
@@ -53,7 +52,7 @@ jobs:
           default: true
           override: true
 
-      - name: Build project
+      - name: Build project - linux -macos
         if: matrix.os != 'windows-latest'
         run: cargo build --all --release && strip target/release/${{ env.RELEASE_BIN }} && mv target/release/${{ env.RELEASE_BIN }} target/release/${{ env.RELEASE_BIN }}_${{ matrix.suffix }}
       
@@ -61,7 +60,7 @@ jobs:
         if: matrix.os == 'windows-latest'
         run: cargo build --all --release
 
-      - name: Release
+      - name: Release - linux - macos
         uses: softprops/action-gh-release@v1
         if: matrix.os != 'windows-latest'
         env: 
