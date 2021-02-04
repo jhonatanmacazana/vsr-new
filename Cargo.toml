@@ -1,6 +1,6 @@
 [package]
 name = "vsr-new"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["Jhonatan Macazana <46355455+jhonatanmacazana@users.noreply.github.com>"]
 license = "MIT"
 description = "Tool for creating projects based on templates repo"
