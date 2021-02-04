@@ -3,16 +3,16 @@
 </h1>
 
 <p align="center">
-    <a href="https://github.com/jhonatanmacazana/vsr-new"><img src="https://img.shields.io/github/v/release/jhonatanmacazana/vsr-new" alt="release version"/></a>
-    <a href="https://github.com/jhonatanmacazana/vsr-new"><img src="https://img.shields.io/github/downloads/jhonatanmacazana/vsr-new/total" alt="Release"/></a>
-    <a href="https://github.com/jhonatanmacazana/vsr-new"><img src="https://img.shields.io/github/workflow/status/jhonatanmacazana/vsr-new/CI?label=CI" alt="CI"/></a>
-    <a href="https://github.com/jhonatanmacazana/vsr-new"><img src="https://img.shields.io/github/workflow/status/jhonatanmacazana/vsr-new/Release?label=release" alt="Release"/></a>
+    <a href="https://github.com/jhonatanmacazana/vsr-new/releases/latest"><img src="https://img.shields.io/github/v/release/jhonatanmacazana/vsr-new" alt="release version"/></a>
+    <a href="https://github.com/jhonatanmacazana/vsr-new"><img src="https://img.shields.io/github/downloads/jhonatanmacazana/vsr-new/total" alt="downloads-github"/></a>
+    <a href="https://github.com/jhonatanmacazana/vsr-new/actions?query=workflow%3ACI"><img src="https://img.shields.io/github/workflow/status/jhonatanmacazana/vsr-new/CI?label=CI" alt="wf-CI"/></a>
+    <a href="https://github.com/jhonatanmacazana/vsr-new/actions?query=workflow%3ARelease"><img src="https://img.shields.io/github/workflow/status/jhonatanmacazana/vsr-new/Release?label=Release" alt="wf-Release"/></a>
 </p>
 
 <p align="center">
     <a href="#"><img src="https://img.shields.io/github/languages/top/jhonatanmacazana/vsr-new?color=purple" alt="language"/></a>
     <a href="https://crates.io/crates/vsr-new"><img src="https://img.shields.io/crates/v/vsr-new" alt="crates.io"/></a>
-    <a href="https://crates.io/crates/vsr-new"><img src="https://img.shields.io/crates/d/vsr-new" alt="Release"/></a>
+    <a href="https://crates.io/crates/vsr-new"><img src="https://img.shields.io/crates/d/vsr-new" alt="downloads-crates"/></a>
 </p>
 
 Rust utility for creating new projects based on my [templates](https://github.com/jhonatanmacazana/vscode-boilerplates) repo.
