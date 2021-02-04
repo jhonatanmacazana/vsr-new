@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        build: [linux, macos, windows, w32]
+        build: [linux, macos, windows]
         include:
           - build: linux
             os: ubuntu-20.04
