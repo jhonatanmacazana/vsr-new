@@ -2,8 +2,8 @@ name: Release
 
 on:
   push:
-    tags:
-      - "v[0-9]+.[0-9]+.[0-9]+*"
+    # tags:
+    #   - "v[0-9]+.[0-9]+.[0-9]+*"
 
 env:
   RELEASE_BIN: vsr-new
@@ -76,16 +76,16 @@ jobs:
           mkdir builds/${{ env.RELEASE_BIN }}-macos
           cp target/x86_64-apple-darwin/release/${{ env.RELEASE_BIN }} builds/${{ env.RELEASE_BIN }}-macos
           tar -C builds -czvf dist/${{ env.RELEASE_BIN }}-macos.tar.gz ${{ env.RELEASE_BIN }}-macos
-      - name: Upload release
-        uses: softprops/action-gh-release@v1
-        with:
-          body_path: CHANGELOG.md
-          files: |
-            dist/${{ env.RELEASE_BIN }}-win64.tar.gz
-            dist/${{ env.RELEASE_BIN }}-linux.tar.gz
-            dist/${{ env.RELEASE_BIN }}-macos.tar.gz
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Upload release
+      #   uses: softprops/action-gh-release@v1
+      #   with:
+      #     body_path: CHANGELOG.md
+      #     files: |
+      #       dist/${{ env.RELEASE_BIN }}-win64.tar.gz
+      #       dist/${{ env.RELEASE_BIN }}-linux.tar.gz
+      #       dist/${{ env.RELEASE_BIN }}-macos.tar.gz
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 
       # - name: Publish npm package
