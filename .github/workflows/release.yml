@@ -2,8 +2,8 @@ name: Release
 
 on:
   push:
-    # tags:
-      # - 'v*.*.*'
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+*"
 
 env:
   RELEASE_BIN: vsr-new
@@ -12,91 +12,45 @@ env:
 jobs: 
   build:
     name: Build release
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        build: [linux, macos, windows]
-        include:
-          - build: linux
-            os: ubuntu-20.04
-            rust: stable
-            suffix: linux
-          - build: macos
-            os: ubuntu-20.04
-            rust: stable
-            suffix: macos
-          - build: windows
-            os: windows-2019
-            rust: stable
-            suffix: win64
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Rust toolchain - Linux
-        uses: actions-rs/toolchain@v1
-        if: matrix.build == 'linux'
-        with:
-          toolchain: stable
-          default: true
-          override: true
+      - name: Run tests
+        run: cargo test --verbose
 
-      - name: Rust toolchain - Windows
-        uses: actions-rs/toolchain@v1
-        if: matrix.build == 'windows'
-        with:
-          toolchain: stable
-          target: x86_64-pc-windows-gnu
-          default: true
-          override: true
-
-      - name: Rust toolchain - Windows
-        uses: actions-rs/toolchain@v1
-        if: matrix.build == 'windows'
-        with:
-          toolchain: stable
-          target: i686-pc-windows-gnu
-          default: true
-          override: true
-
-      - name: Rust toolchain - Mac OS
-        uses: actions-rs/toolchain@v1
-        if: matrix.build == 'macos'
-        with:
-          toolchain: stable
-          target: x86_64-apple-darwin
-          default: true
-          override: true
-
-      - name: Build project - Linux
-        if: matrix.build == 'linux'
+      - name: Install dependencies
         run: |
-          cargo build --all --release 
-          strip target/release/${{ env.RELEASE_BIN }} 
-          mkdir -p builds/${{ env.RELEASE_BIN }}-${{ matrix.suffix }} dist
-          cp target/release/${{ env.RELEASE_BIN }} builds/${{ env.RELEASE_BIN }}-${{ matrix.suffix }}
-          tar -C builds -czvf dist/${{ env.RELEASE_BIN }}-${{ matrix.suffix }}.tar.gz ${{env.RELEASE_BIN }}-${{ matrix.suffix }}
-
-      - name: Build project - Windows 64
-        if: matrix.build == 'windows'
+          sudo apt-get update
+          sudo apt-get -y install gcc-mingw-w64-x86-64 gcc-mingw-w64-i686
+          rustup target add x86_64-pc-windows-gnu
+          rustup target add i686-pc-windows-gnu
+          rustup target add x86_64-unknown-linux-gnu
+          rustup target add x86_64-apple-darwin
+          mkdir dist
+          mkdir builds
+          
+      - name: Build Win64
         run: |
-          cargo rustc --release --target=x86_64-pc-windows-gnu
-          mkdir -p builds/${{ env.RELEASE_BIN }}-win64 dist
+          cargo rustc --release --target=x86_64-pc-windows-gnu -- -C linker=x86_64-w64-mingw32-gcc
+          mkdir builds/${{ env.RELEASE_BIN }}-win64
           cp target/x86_64-pc-windows-gnu/release/${{ env.RELEASE_BIN }}.exe builds/${{ env.RELEASE_BIN }}-win64
           tar -C builds -czvf dist/${{ env.RELEASE_BIN }}-win64.tar.gz ${{ env.RELEASE_BIN }}-win64
-      
-      - name: Build project - Windows 32
-        if: matrix.build == 'windows'
+      # - name: Build Win32
+      #   run: |
+      #     cargo rustc --release --target=i686-pc-windows-gnu -- -C linker=i686-w64-mingw32-gcc -C link-args=-mwindows -C panic=abort
+      #     mkdir builds/${{ env.RELEASE_BIN }}-win32
+      #     cp target/i686-pc-windows-gnu/release/${{ env.RELEASE_BIN }}.exe builds/${{ env.RELEASE_BIN }}-win32
+      #     tar -C builds -czvf dist/${{ env.RELEASE_BIN }}-win32.tar.gz ${{ env.RELEASE_BIN }}-win32
+      - name: Build Linux
         run: |
-          cargo rustc --release --target=i686-pc-windows-gnu
-          mkdir -p builds/${{ env.RELEASE_BIN }}-win32 dist
-          cp target/i686-pc-windows-gnu/release/${{ env.RELEASE_BIN }}.exe builds/${{ env.RELEASE_BIN }}-win32
-          tar -C builds -czvf dist/${{ env.RELEASE_BIN }}-win32.tar.gz ${{ env.RELEASE_BIN }}-win32
-
+          cargo rustc --release --target=x86_64-unknown-linux-gnu
+          mkdir builds/${{ env.RELEASE_BIN }}-linux
+          cp target/x86_64-unknown-linux-gnu/release/${{ env.RELEASE_BIN }} builds/${{ env.RELEASE_BIN }}-linux
+          tar -C builds -czvf dist/${{ env.RELEASE_BIN }}-linux.tar.gz ${{ env.RELEASE_BIN }}-linux
       - name: Cache Mac OS dependencies
-        if: matrix.build == 'macos'
         id: cache-macos
         uses: actions/cache@v1
         with:
@@ -104,7 +58,7 @@ jobs:
           key: ${{ runner.os }}-osxcross
 
       - name: Install Mac OS dependencies
-        if: matrix.build == 'macos' && steps.cache-macos.outputs.cache-hit != 'true'
+        if: steps.cache-macos.outputs.cache-hit != 'true'
         run: |
           git clone https://github.com/tpoechtrager/osxcross
           cd osxcross
@@ -112,78 +66,27 @@ jobs:
           wget -nc https://s3.dockerproject.org/darwin/v2/MacOSX10.10.sdk.tar.xz
           mv MacOSX10.10.sdk.tar.xz tarballs/
           UNATTENDED=yes OSX_VERSION_MIN=10.7 ./build.sh
-
-      - name: Build project - Mac OS
-        if: matrix.build == 'macos'
+      - name: Build Mac OS
         run: |
           export PATH="$(pwd)/osxcross/target/bin:$PATH"
           export LIBZ_SYS_STATIC=1
           export CC=o64-clang
           export CXX=o64-clang++
           cargo build --release --target "x86_64-apple-darwin"
-          mkdir builds/${{ env.RELEASE_BIN }}-${{ matrix.suffix }} dist
-          cp target/x86_64-apple-darwin/release/${{ env.RELEASE_BIN }} builds/${{ env.RELEASE_BIN }}-${{ matrix.suffix }}
-          tar -C builds -czvf dist/${{ env.RELEASE_BIN }}-${{ matrix.suffix }}.tar.gz ${{ env.RELEASE_BIN }}-${{ matrix.suffix }}
-
-      - name: Upload build - Linux
-        if: matrix.build == 'linux'
-        uses: actions/upload-artifact@v2
+          mkdir builds/${{ env.RELEASE_BIN }}-macos
+          cp target/x86_64-apple-darwin/release/${{ env.RELEASE_BIN }} builds/${{ env.RELEASE_BIN }}-macos
+          tar -C builds -czvf dist/${{ env.RELEASE_BIN }}-macos.tar.gz ${{ env.RELEASE_BIN }}-macos
+      - name: Upload release
+        uses: softprops/action-gh-release@v1
         with:
-          name: ${{ env.RELEASE_BIN }}-${{ matrix.suffix }}.tar.gz
-          path: dist/${{ env.RELEASE_BIN }}-${{ matrix.suffix }}.tar.gz
+          body_path: CHANGELOG.md
+          files: |
+            dist/${{ env.RELEASE_BIN }}-win64.tar.gz
+            dist/${{ env.RELEASE_BIN }}-linux.tar.gz
+            dist/${{ env.RELEASE_BIN }}-macos.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload build - Mac OS
-        if: matrix.build == 'macos'
-        uses: actions/upload-artifact@v2
-        with:
-          name: ${{ env.RELEASE_BIN }}-${{ matrix.suffix }}.tar.gz
-          path: dist/${{ env.RELEASE_BIN }}-${{ matrix.suffix }}.tar.gz
-
-      - name: Upload build - Win32
-        if: matrix.build == 'windows'
-        uses: actions/upload-artifact@v2
-        with:
-          name: ${{ env.RELEASE_BIN }}-win32.tar.gz
-          path: dist/${{ env.RELEASE_BIN }}-win32.tar.gz
-      
-      - name: Upload build - Win64
-        if: matrix.build == 'windows'
-        uses: actions/upload-artifact@v2
-        with:
-          name: ${{ env.RELEASE_BIN }}-win64.tar.gz
-          path: dist/${{ env.RELEASE_BIN }}-win64.tar.gz
-
-  upload:
-    runs-on: ubuntu-20.04
-    needs: [build]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Create dist folder
-        run: |
-          mkdir -p dist
-      
-      - name: Download builds
-        uses: actions/download-artifact@v2
-        with:
-          path: dist
-
-          
-      - name: Display structure of downloaded files
-        run: ls -R
-
-      # - name: Upload release
-      #   uses: softprops/action-gh-release@v1
-      #   with:
-      #     body_path: CHANGELOG.md
-      #     files: |
-      #       dist/${{ env.RELEASE_BIN }}-win64.tar.gz
-      #       dist/${{ env.RELEASE_BIN }}-win32.tar.gz
-      #       dist/${{ env.RELEASE_BIN }}-linux.tar.gz
-      #       dist/${{ env.RELEASE_BIN }}-macos.tar.gz
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # - name: Publish npm package
       #   env:
