@@ -19,15 +19,15 @@ jobs:
         build: [linux, macos, windows]
         include:
           - build: linux
-            os: ubuntu-20.04
+            os: ubuntu-latest
             rust: stable
             suffix: linux
           - build: macos
-            os: ubuntu-20.04
+            os: ubuntu-latest
             rust: stable
             suffix: macos
           - build: windows
-            os: windows-2019
+            os: windows-latest
             rust: stable
             suffix: win64
 
