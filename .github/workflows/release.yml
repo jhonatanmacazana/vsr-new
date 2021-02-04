@@ -48,6 +48,7 @@ jobs:
         if: matrix.build == 'windows'
         with:
           toolchain: stable
+          target: x86_64-pc-windows-gnu i686-pc-windows-gnu
           default: true
           override: true
 
