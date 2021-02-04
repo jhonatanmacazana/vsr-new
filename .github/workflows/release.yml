@@ -48,7 +48,25 @@ jobs:
         if: matrix.build == 'windows'
         with:
           toolchain: stable
-          target: x86_64-pc-windows-gnu,i686-pc-windows-gnu
+          target: x86_64-pc-windows-gnu
+          default: true
+          override: true
+
+      - name: Rust toolchain - Windows
+        uses: actions-rs/toolchain@v1
+        if: matrix.build == 'windows'
+        with:
+          toolchain: stable
+          target: i686-pc-windows-gnu
+          default: true
+          override: true
+
+      - name: Rust toolchain - Mac OS
+        uses: actions-rs/toolchain@v1
+        if: matrix.build == 'macos'
+        with:
+          toolchain: stable
+          target: x86_64-apple-darwin
           default: true
           override: true
 
