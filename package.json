@@ -1,6 +1,6 @@
 {
   "name": "vsr-new",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Boilerplate for different type of projects",
   "main": "index.js",
   "author": "jmacazana <jhonatan.macazana@utec.edu.pe>",
@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/jhonatanmacazana/vsr-new#readme",
   "bin": {
-    "vsr-new": "./npm/instarun.js"
+    "vsr-new": "./npm/execute.js"
   },
   "scripts": {
     "postinstall": "node npm/install.js",

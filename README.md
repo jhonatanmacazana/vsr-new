@@ -58,3 +58,11 @@ cargo install vsr-new
 * [x] Distribute binaries from github
 * [ ] Distribute binary with Chocolatey (Windows)
 * [ ] Distribute binary with apt (Linux)
+
+## Contributions welcome
+
+This project welcomes contributions of any kind, whether you want to add new features, improve the documentation or just want to give some feedback.
+
+## License
+
+vsr-new is published under the MIT license. See the LICENSE file for more information.
