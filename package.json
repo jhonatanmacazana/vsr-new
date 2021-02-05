@@ -1,0 +1,35 @@
+{
+  "name": "vsr-new",
+  "version": "0.1.4",
+  "description": "Boilerplate for different type of projects",
+  "main": "index.js",
+  "author": "jmacazana <jhonatan.macazana@utec.edu.pe>",
+  "license": "MIT",
+  "keywords": [
+    "boilerplates",
+    "github",
+    "cli",
+    "templates",
+    "vscode"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jhonatanmacazana/vsr-new"
+  },
+  "bugs": {
+    "url": "https://github.com/jhonatanmacazana/vsr-new/issues"
+  },
+  "homepage": "https://github.com/jhonatanmacazana/vsr-new#readme",
+  "bin": {
+    "vsr-new": "./npm/run.js"
+  },
+  "scripts": {
+    "postinstall": "node ./npm/install.js"
+  },
+  "dependencies": {
+    "binary-install": "^0.1.1"
+  },
+  "files": [
+    "npm/**"
+  ]
+}

@@ -1,3 +1,3 @@
 ## News
 
-⚡ Support for win32, win64, linux and macos
+⚡ Support for win64, linux and macos
