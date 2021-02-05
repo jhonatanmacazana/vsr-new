@@ -32,7 +32,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Rust toolchain - ${{ matrix.suffix }}
+      - name: Rust toolchain - Linux - Win64
         uses: actions-rs/toolchain@v1
         if: matrix.build != 'macos'
         with:
@@ -40,7 +40,7 @@ jobs:
           default: true
           override: true
 
-      - name: Rust toolchain - ${{ matrix.suffix }}
+      - name: Rust toolchain - Mac OS
         uses: actions-rs/toolchain@v1
         if: matrix.build == 'macos'
         with:
@@ -49,25 +49,26 @@ jobs:
           default: true
           override: true
 
-      - name: Build project - ${{ matrix.suffix }}
+      - name: Build project - Linux - Mac OS
         if: matrix.build != 'windows'
         run: |
           cargo build --all --release
           strip target/release/${{ env.RELEASE_BIN }}
       
-      - name: Build project - ${{ matrix.suffix }}
+      - name: Build project - Win64
         if: matrix.build == 'windows'
         run: |
           cargo build --all --release
 
-      - name: Upload build - ${{ matrix.suffix }}
+      - name: Upload build - Linux - Mac OS
         if: matrix.build != 'windows'
         uses: actions/upload-artifact@v2
         with:
           name: ${{ env.RELEASE_BIN }}-${{ matrix.suffix }}
           path: target/release/${{ env.RELEASE_BIN }}
+          retention-days: 1
 
-      - name: Upload build - ${{ matrix.suffix }}
+      - name: Upload build - Win64
         if: matrix.build == 'windows'
         uses: actions/upload-artifact@v2
         with:
@@ -83,15 +84,30 @@ jobs:
 
       - name: Create dist folder
         run: |
-          mkdir -p dist
-      
+          mkdir -p dist artifacts build/${RELEASE_BIN}-{linux,win64,macos}
+
       - name: Download builds
         uses: actions/download-artifact@v2
         with:
-          path: dist
-          
+          path: artifacts
+
+      - name: Generates packages for release - Win64
+        run: |
+          mv artifacts/${RELEASE_BIN}-win64 build/${RELEASE_BIN}-win64/${RELEASE_BIN}.exe
+          tar -C build -czvf dist/${RELEASE_BIN}-win64.tar.gz ${RELEASE_BIN}-win64
+
+      - name: Generates packages for release - Linux
+        run: |
+          mv artifacts/${RELEASE_BIN}-linux build/${RELEASE_BIN}-linux/${RELEASE_BIN}
+          tar -C build -czvf dist/${RELEASE_BIN}-linux.tar.gz ${RELEASE_BIN}-linux
+
+      # - name: Generates packages for release - Mac OS
+      #   run: |
+      #     mv artifacts/${RELEASE_BIN}-macos build/${RELEASE_BIN}-macos/${RELEASE_BIN}
+      #     tar -C build -czvf dist/${RELEASE_BIN}-macos.tar.gz ${RELEASE_BIN}-macos
+
       - name: Display structure of downloaded files
-        run: ls -R
+        run: ls -R artifacts
 
       # - name: Upload release
       #   uses: softprops/action-gh-release@v1
