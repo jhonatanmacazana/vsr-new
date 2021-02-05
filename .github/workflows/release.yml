@@ -15,15 +15,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        build: [linux, windows]
-        # build: [linux, macos, windows]
+        build: [linux, macos, windows]
         include:
           - build: linux
             os: ubuntu-20.04
             suffix: linux
-          # - build: macos
-          #   os: macos-latest
-          #   suffix: macos
+          - build: macos
+            os: macos-latest
+            suffix: macos
           - build: windows
             os: windows-latest
             suffix: win64
@@ -74,6 +73,7 @@ jobs:
         with:
           name: ${{ env.RELEASE_BIN }}-${{ matrix.suffix }}
           path: target/release/${{ env.RELEASE_BIN }}.exe
+          retention-days: 1
 
   upload:
     runs-on: ubuntu-20.04
@@ -101,13 +101,24 @@ jobs:
           mv artifacts/${RELEASE_BIN}-linux build/${RELEASE_BIN}-linux/
           tar -C build -czvf dist/${RELEASE_BIN}-linux.tar.gz ${RELEASE_BIN}-linux
 
-      # - name: Generates packages for release - Mac OS
-      #   run: |
-      #     mv artifacts/${RELEASE_BIN}-macos build/${RELEASE_BIN}-macos/
-      #     tar -C build -czvf dist/${RELEASE_BIN}-macos.tar.gz ${RELEASE_BIN}-macos
+      - name: Generates packages for release - Mac OS
+        run: |
+          mv artifacts/${RELEASE_BIN}-macos build/${RELEASE_BIN}-macos/
+          tar -C build -czvf dist/${RELEASE_BIN}-macos.tar.gz ${RELEASE_BIN}-macos
 
       - name: Display structure of downloaded files
         run: ls -R dist
+
+      - name: Generate test artifact of release
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-release
+          path: |
+            CHANGELOG.md
+            dist/${{ env.RELEASE_BIN }}-win64.tar.gz
+            dist/${{ env.RELEASE_BIN }}-linux.tar.gz
+            dist/${{ env.RELEASE_BIN }}-macos.tar.gz
+          retention-days: 1
 
       # - name: Upload release
       #   uses: softprops/action-gh-release@v1
