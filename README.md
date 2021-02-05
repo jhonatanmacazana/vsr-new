@@ -39,10 +39,17 @@ List all available templates
 
 ##  🛠️ Installation
 
-### Binaries
+### `npx` [Recommended]
+
+Is highly recommended to use `npx` on every usage of the binary.
+```
+npx vsr-new --types
+```
+It works on Windows, Linux and MacOS if you have Node installed. It will use the latest release - stable version of the binary.
+
+### With Binaries
 
 Checkout the latest [release](https://github.com/jhonatanmacazana/vsr-new/releases/latest). Download the binary for your specific OS.
-
 
 ### From source
 
@@ -52,12 +59,22 @@ If you want to build `vsr-new` from source, you need Rust on your OS. You can th
 cargo install vsr-new
 ```
 
+### `npm`
+
+You can install the binary with the Node Package Manager
+```bash
+npm install -g vsr-new
+```
+This is the less adviced for new users. If you want to avoid the `npx` preffix on each usage, download the binary for your OS and add it to your **OS path**.
+
 ## 🤔 To-do
 
 * [x] CI/CD
 * [x] Distribute binaries from github
+* [x] Distribute binaries with npm
 * [ ] Distribute binary with Chocolatey (Windows)
 * [ ] Distribute binary with apt (Linux)
+* [ ] Distribute binary with brew (Mac OS)
 
 ## Contributions welcome
 
@@ -65,4 +82,4 @@ This project welcomes contributions of any kind, whether you want to add new fea
 
 ## License
 
-vsr-new is published under the MIT license. See the LICENSE file for more information.
+`vsr-new` is published under the MIT license. See the LICENSE file for more information.
