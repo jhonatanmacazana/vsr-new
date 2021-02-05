@@ -106,45 +106,28 @@ jobs:
           mv artifacts/${RELEASE_BIN}-macos build/
           tar -C build -czvf dist/${RELEASE_BIN}-macos.tar.gz ${RELEASE_BIN}-macos
 
-      - name: Display structure of downloaded files
-        run: ls -R dist
-
-      - name: Generate test artifact of release
-        uses: actions/upload-artifact@v2
+      - name: Upload release
+        uses: softprops/action-gh-release@v1
         with:
-          name: test-release
-          path: |
-            CHANGELOG.md
+          body_path: CHANGELOG.md
+          files: |
             dist/${{ env.RELEASE_BIN }}-win64.tar.gz
             dist/${{ env.RELEASE_BIN }}-linux.tar.gz
             dist/${{ env.RELEASE_BIN }}-macos.tar.gz
-          retention-days: 1
-
-      # - name: Upload release
-      #   uses: softprops/action-gh-release@v1
-      #   with:
-      #     body_path: CHANGELOG.md
-      #     files: |
-      #       dist/${{ env.RELEASE_BIN }}-win64.tar.gz
-      #       dist/${{ env.RELEASE_BIN }}-linux.tar.gz
-      #       dist/${{ env.RELEASE_BIN }}-macos.tar.gz
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 
-      # - name: Publish npm package
-      #   env:
-      #     NPM_ACCESS_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
-      #   run: |
-      #     echo "//registry.npmjs.org/:_authToken=$NPM_ACCESS_TOKEN" > ".npmrc"
-      #     npm publish
-      # - name: Publish cargo package
-      #   env:
-      #     CARGO_ACCESS_TOKEN: ${{ secrets.CARGO_ACCESS_TOKEN }}
-      #   run: |
-      #     cargo login "$CARGO_ACCESS_TOKEN"
-      #     cargo publish
-      # - name: Publish docs
-      #   env:
-      #     NETLIFY_BUILD_HOOK: ${{ secrets.NETLIFY_BUILD_HOOK }}
-      #   run: curl -X POST -d {} "$NETLIFY_BUILD_HOOK"
+      - name: Publish npm package
+        env:
+          NPM_ACCESS_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
+        run: |
+          echo "//registry.npmjs.org/:_authToken=$NPM_ACCESS_TOKEN" > ".npmrc"
+          npm publish
+          
+      - name: Publish cargo package
+        env:
+          CARGO_ACCESS_TOKEN: ${{ secrets.CARGO_ACCESS_TOKEN }}
+        run: |
+          cargo login "$CARGO_ACCESS_TOKEN"
+          cargo publish
