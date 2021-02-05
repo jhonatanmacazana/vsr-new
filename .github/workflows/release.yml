@@ -8,74 +8,91 @@ on:
 env:
   RELEASE_BIN: vsr-new
   RELEASE_ADDS: README.md LICENSE
-
 jobs: 
   build:
     name: Build release
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        build: [linux, windows]
+        # build: [linux, macos, windows]
+        include:
+          - build: linux
+            os: ubuntu-20.04
+            suffix: linux
+          # - build: macos
+          #   os: macos-latest
+          #   suffix: macos
+          - build: windows
+            os: windows-latest
+            suffix: win64
 
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Run tests
-        run: cargo test --verbose
-
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get -y install gcc-mingw-w64-x86-64 gcc-mingw-w64-i686
-          rustup target add x86_64-pc-windows-gnu
-          rustup target add i686-pc-windows-gnu
-          rustup target add x86_64-unknown-linux-gnu
-          rustup target add x86_64-apple-darwin
-          mkdir dist
-          mkdir builds
-          
-      - name: Build Win64
-        run: |
-          cargo rustc --release --target=x86_64-pc-windows-gnu -- -C linker=x86_64-w64-mingw32-gcc
-          mkdir builds/${{ env.RELEASE_BIN }}-win64
-          cp target/x86_64-pc-windows-gnu/release/${{ env.RELEASE_BIN }}.exe builds/${{ env.RELEASE_BIN }}-win64
-          tar -C builds -czvf dist/${{ env.RELEASE_BIN }}-win64.tar.gz ${{ env.RELEASE_BIN }}-win64
-      # - name: Build Win32
-      #   run: |
-      #     cargo rustc --release --target=i686-pc-windows-gnu -- -C linker=i686-w64-mingw32-gcc -C link-args=-mwindows -C panic=abort
-      #     mkdir builds/${{ env.RELEASE_BIN }}-win32
-      #     cp target/i686-pc-windows-gnu/release/${{ env.RELEASE_BIN }}.exe builds/${{ env.RELEASE_BIN }}-win32
-      #     tar -C builds -czvf dist/${{ env.RELEASE_BIN }}-win32.tar.gz ${{ env.RELEASE_BIN }}-win32
-      - name: Build Linux
-        run: |
-          cargo rustc --release --target=x86_64-unknown-linux-gnu
-          mkdir builds/${{ env.RELEASE_BIN }}-linux
-          cp target/x86_64-unknown-linux-gnu/release/${{ env.RELEASE_BIN }} builds/${{ env.RELEASE_BIN }}-linux
-          tar -C builds -czvf dist/${{ env.RELEASE_BIN }}-linux.tar.gz ${{ env.RELEASE_BIN }}-linux
-      - name: Cache Mac OS dependencies
-        id: cache-macos
-        uses: actions/cache@v1
+      - name: Rust toolchain - ${{ matrix.suffix }}
+        uses: actions-rs/toolchain@v1
+        if: matrix.build != 'macos'
         with:
-          path: osxcross
-          key: ${{ runner.os }}-osxcross
+          toolchain: stable
+          default: true
+          override: true
 
-      - name: Install Mac OS dependencies
-        if: steps.cache-macos.outputs.cache-hit != 'true'
+      - name: Rust toolchain - ${{ matrix.suffix }}
+        uses: actions-rs/toolchain@v1
+        if: matrix.build == 'macos'
+        with:
+          toolchain: stable
+          target: x86_64-apple-darwin
+          default: true
+          override: true
+
+      - name: Build project - ${{ matrix.suffix }}
+        if: matrix.build != 'windows'
         run: |
-          git clone https://github.com/tpoechtrager/osxcross
-          cd osxcross
-          sudo tools/get_dependencies.sh
-          wget -nc https://s3.dockerproject.org/darwin/v2/MacOSX10.10.sdk.tar.xz
-          mv MacOSX10.10.sdk.tar.xz tarballs/
-          UNATTENDED=yes OSX_VERSION_MIN=10.7 ./build.sh
-      - name: Build Mac OS
+          cargo build --all --release
+          strip target/release/${{ env.RELEASE_BIN }}
+      
+      - name: Build project - ${{ matrix.suffix }}
+        if: matrix.build == 'windows'
         run: |
-          export PATH="$(pwd)/osxcross/target/bin:$PATH"
-          export LIBZ_SYS_STATIC=1
-          export CC=o64-clang
-          export CXX=o64-clang++
-          cargo build --release --target "x86_64-apple-darwin"
-          mkdir builds/${{ env.RELEASE_BIN }}-macos
-          cp target/x86_64-apple-darwin/release/${{ env.RELEASE_BIN }} builds/${{ env.RELEASE_BIN }}-macos
-          tar -C builds -czvf dist/${{ env.RELEASE_BIN }}-macos.tar.gz ${{ env.RELEASE_BIN }}-macos
+          cargo build --all --release
+
+      - name: Upload build - ${{ matrix.suffix }}
+        if: matrix.build != 'windows'
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ env.RELEASE_BIN }}-${{ matrix.suffix }}
+          path: target/release/${{ env.RELEASE_BIN }}
+
+      - name: Upload build - ${{ matrix.suffix }}
+        if: matrix.build == 'windows'
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ env.RELEASE_BIN }}-${{ matrix.suffix }}
+          path: target/release/${{ env.RELEASE_BIN }}.exe
+
+  upload:
+    runs-on: ubuntu-20.04
+    needs: [build]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Create dist folder
+        run: |
+          mkdir -p dist
+      
+      - name: Download builds
+        uses: actions/download-artifact@v2
+        with:
+          path: dist
+          
+      - name: Display structure of downloaded files
+        run: ls -R
+
       # - name: Upload release
       #   uses: softprops/action-gh-release@v1
       #   with:
