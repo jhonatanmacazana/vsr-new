@@ -5,8 +5,8 @@
 <p align="center">
     <a href="https://github.com/jhonatanmacazana/vsr-new/releases/latest"><img src="https://img.shields.io/github/v/release/jhonatanmacazana/vsr-new" alt="release version"/></a>
     <a href="https://github.com/jhonatanmacazana/vsr-new"><img src="https://img.shields.io/github/downloads/jhonatanmacazana/vsr-new/total" alt="downloads-github"/></a>
-    <a href="https://github.com/jhonatanmacazana/vsr-new/actions?query=workflow%3ACI"><img src="https://img.shields.io/github/workflow/status/jhonatanmacazana/vsr-new/CI?label=CI" alt="wf-CI"/></a>
-    <a href="https://github.com/jhonatanmacazana/vsr-new/actions?query=workflow%3ARelease"><img src="https://img.shields.io/github/workflow/status/jhonatanmacazana/vsr-new/Release?label=Release" alt="wf-Release"/></a>
+    <a href="https://github.com/jhonatanmacazana/vsr-new/actions?query=workflow%3ACI"><img src="https://github.com/jhonatanmacazana/vsr-new/workflows/CI/badge.svg" alt="wf-CI"></a>
+    <a href="https://github.com/jhonatanmacazana/vsr-new/actions?query=workflow%3ARelease"><img src="https://github.com/jhonatanmacazana/vsr-new/workflows/Release/badge.svg" alt="wf-Release"></a>
 </p>
 
 <p align="center">

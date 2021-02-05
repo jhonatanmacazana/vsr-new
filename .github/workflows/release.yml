@@ -93,17 +93,17 @@ jobs:
 
       - name: Generates packages for release - Win64
         run: |
-          mv artifacts/${RELEASE_BIN}-win64 build/${RELEASE_BIN}-win64/
+          mv artifacts/${RELEASE_BIN}-win64 build/${RELEASE_BIN}-win64
           tar -C build -czvf dist/${RELEASE_BIN}-win64.tar.gz ${RELEASE_BIN}-win64
 
       - name: Generates packages for release - Linux
         run: |
-          mv artifacts/${RELEASE_BIN}-linux build/${RELEASE_BIN}-linux/
+          mv artifacts/${RELEASE_BIN}-linux build/${RELEASE_BIN}-linux
           tar -C build -czvf dist/${RELEASE_BIN}-linux.tar.gz ${RELEASE_BIN}-linux
 
       - name: Generates packages for release - Mac OS
         run: |
-          mv artifacts/${RELEASE_BIN}-macos build/${RELEASE_BIN}-macos/
+          mv artifacts/${RELEASE_BIN}-macos build/${RELEASE_BIN}-macos
           tar -C build -czvf dist/${RELEASE_BIN}-macos.tar.gz ${RELEASE_BIN}-macos
 
       - name: Display structure of downloaded files
