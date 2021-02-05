@@ -9,75 +9,75 @@ env:
   RELEASE_BIN: vsr-new
   RELEASE_ADDS: README.md LICENSE
 jobs: 
-  build:
-    name: Build release
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        build: [linux, windows]
-        # build: [linux, macos, windows]
-        include:
-          - build: linux
-            os: ubuntu-20.04
-            suffix: linux
-          # - build: macos
-          #   os: macos-latest
-          #   suffix: macos
-          - build: windows
-            os: windows-latest
-            suffix: win64
+  # build:
+  #   name: Build release
+  #   runs-on: ${{ matrix.os }}
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       build: [linux, windows]
+  #       # build: [linux, macos, windows]
+  #       include:
+  #         - build: linux
+  #           os: ubuntu-20.04
+  #           suffix: linux
+  #         # - build: macos
+  #         #   os: macos-latest
+  #         #   suffix: macos
+  #         - build: windows
+  #           os: windows-latest
+  #           suffix: win64
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v2
 
-      - name: Rust toolchain - Linux - Win64
-        uses: actions-rs/toolchain@v1
-        if: matrix.build != 'macos'
-        with:
-          toolchain: stable
-          default: true
-          override: true
+  #     - name: Rust toolchain - Linux - Win64
+  #       uses: actions-rs/toolchain@v1
+  #       if: matrix.build != 'macos'
+  #       with:
+  #         toolchain: stable
+  #         default: true
+  #         override: true
 
-      - name: Rust toolchain - Mac OS
-        uses: actions-rs/toolchain@v1
-        if: matrix.build == 'macos'
-        with:
-          toolchain: stable
-          target: x86_64-apple-darwin
-          default: true
-          override: true
+  #     - name: Rust toolchain - Mac OS
+  #       uses: actions-rs/toolchain@v1
+  #       if: matrix.build == 'macos'
+  #       with:
+  #         toolchain: stable
+  #         target: x86_64-apple-darwin
+  #         default: true
+  #         override: true
 
-      - name: Build project - Linux - Mac OS
-        if: matrix.build != 'windows'
-        run: |
-          cargo build --all --release
-          strip target/release/${{ env.RELEASE_BIN }}
+  #     - name: Build project - Linux - Mac OS
+  #       if: matrix.build != 'windows'
+  #       run: |
+  #         cargo build --all --release
+  #         strip target/release/${{ env.RELEASE_BIN }}
       
-      - name: Build project - Win64
-        if: matrix.build == 'windows'
-        run: |
-          cargo build --all --release
+  #     - name: Build project - Win64
+  #       if: matrix.build == 'windows'
+  #       run: |
+  #         cargo build --all --release
 
-      - name: Upload build - Linux - Mac OS
-        if: matrix.build != 'windows'
-        uses: actions/upload-artifact@v2
-        with:
-          name: ${{ env.RELEASE_BIN }}-${{ matrix.suffix }}
-          path: target/release/${{ env.RELEASE_BIN }}
-          retention-days: 1
+  #     - name: Upload build - Linux - Mac OS
+  #       if: matrix.build != 'windows'
+  #       uses: actions/upload-artifact@v2
+  #       with:
+  #         name: ${{ env.RELEASE_BIN }}-${{ matrix.suffix }}
+  #         path: target/release/${{ env.RELEASE_BIN }}
+  #         retention-days: 1
 
-      - name: Upload build - Win64
-        if: matrix.build == 'windows'
-        uses: actions/upload-artifact@v2
-        with:
-          name: ${{ env.RELEASE_BIN }}-${{ matrix.suffix }}
-          path: target/release/${{ env.RELEASE_BIN }}.exe
+  #     - name: Upload build - Win64
+  #       if: matrix.build == 'windows'
+  #       uses: actions/upload-artifact@v2
+  #       with:
+  #         name: ${{ env.RELEASE_BIN }}-${{ matrix.suffix }}
+  #         path: target/release/${{ env.RELEASE_BIN }}.exe
 
   upload:
     runs-on: ubuntu-20.04
-    needs: [build]
+    # needs: [build]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -93,17 +93,17 @@ jobs:
 
       - name: Generates packages for release - Win64
         run: |
-          mv artifacts/${RELEASE_BIN}-win64 build/${RELEASE_BIN}-win64/${RELEASE_BIN}.exe
+          mv artifacts/${RELEASE_BIN}-win64 build/${RELEASE_BIN}-win64/
           tar -C build -czvf dist/${RELEASE_BIN}-win64.tar.gz ${RELEASE_BIN}-win64
 
       - name: Generates packages for release - Linux
         run: |
-          mv artifacts/${RELEASE_BIN}-linux build/${RELEASE_BIN}-linux/${RELEASE_BIN}
+          mv artifacts/${RELEASE_BIN}-linux build/${RELEASE_BIN}-linux/
           tar -C build -czvf dist/${RELEASE_BIN}-linux.tar.gz ${RELEASE_BIN}-linux
 
       # - name: Generates packages for release - Mac OS
       #   run: |
-      #     mv artifacts/${RELEASE_BIN}-macos build/${RELEASE_BIN}-macos/${RELEASE_BIN}
+      #     mv artifacts/${RELEASE_BIN}-macos build/${RELEASE_BIN}-macos/
       #     tar -C build -czvf dist/${RELEASE_BIN}-macos.tar.gz ${RELEASE_BIN}-macos
 
       - name: Display structure of downloaded files
