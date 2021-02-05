@@ -41,11 +41,11 @@ impl BpHandler {
         let content = self.get_content("/").await?;
 
         let mut types = vec![];
-        for elem in content {
-            if elem.r#type != "dir" {
+        for el in content {
+            if el.r#type != "dir" {
                 continue;
             }
-            types.push(elem.name);
+            types.push(el.name);
         }
         Ok(types)
     }
