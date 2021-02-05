@@ -1,5 +1,4 @@
 #!/usr/bin/env node
 
-const { install, run } = require("./binary");
-install();
+const { run } = require("./binary");
 run();

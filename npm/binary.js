@@ -1,7 +1,8 @@
-const { Binary } = require("binary-install");
 const os = require("os");
 
-function getPlatform() {
+const Binary = require("./_binary");
+
+const getPlatform = () => {
   const type = os.type();
   const arch = os.arch();
 
@@ -12,28 +13,35 @@ function getPlatform() {
   throw new Error(
     `Unsupported platform: ${type} ${arch}. Please create an issue at https://github.com/jhonatanmacazana/vsr-new/issues`
   );
-}
+};
 
-function getBinary() {
+const getBinary = () => {
   const platform = getPlatform();
   const version = require("../package.json").version;
   const url = `https://github.com/jhonatanmacazana/vsr-new/releases/download/v${version}/vsr-new-${platform}.tar.gz`;
-  const binary = new Binary("vsr-new", url);
+  const binary = new Binary(url, { name: "vsr-new" });
 
   return binary;
-}
+};
 
-function install() {
+const install = () => {
   const binary = getBinary();
-  binary.install();
-}
+  return binary.install();
+};
 
-function run() {
+const uninstall = () => {
+  const binary = getBinary();
+  binary.uninstall();
+};
+
+const run = () => {
   const binary = getBinary();
   binary.run();
-}
+};
 
 module.exports = {
+  getBinary,
   install,
   run,
+  uninstall,
 };
