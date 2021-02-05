@@ -2,7 +2,7 @@
 
 const isInstalledGlobally = require("is-installed-globally");
 
-const { install, run } = require("./binary");
+const { install, run, uninstall } = require("./binary");
 
 (async () => {
   if (isInstalledGlobally) {
@@ -10,5 +10,6 @@ const { install, run } = require("./binary");
   } else {
     await install();
     setTimeout(run, 3000);
+    uninstall();
   }
 })();

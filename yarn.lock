@@ -157,6 +157,15 @@ tar@^6.1.0:
     mkdirp "^1.0.3"
     yallist "^4.0.0"
 
+ts-binary-install@^0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/ts-binary-install/-/ts-binary-install-0.0.1.tgz#b432cea551bcc348e5d3f42500b8f5f143b015c1"
+  integrity sha512-65IAjFvlCr4G3pPs181YPqzl5LhE/ioU7Dp7L/+BdBlLg25MCAfgToXOFk9enVoEXjZE73rEjfLsPJ/ZxYgNcw==
+  dependencies:
+    axios "^0.21.1"
+    rimraf "^3.0.2"
+    tar "^6.1.0"
+
 wrappy@1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/wrappy/-/wrappy-1.0.2.tgz#b5243d8f3ec1aa35f1364605bc0d1036e30ab69f"

@@ -1,6 +1,6 @@
 {
   "name": "vsr-new",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "Boilerplate for different type of projects",
   "main": "index.js",
   "author": "jmacazana <jhonatan.macazana@utec.edu.pe>",
@@ -28,10 +28,8 @@
     "preuninstall": "node npm/uninstall.js"
   },
   "dependencies": {
-    "axios": "^0.21.1",
     "is-installed-globally": "^0.4.0",
-    "rimraf": "^3.0.2",
-    "tar": "^6.1.0"
+    "ts-binary-install": "^0.0.1"
   },
   "files": [
     "npm/**"

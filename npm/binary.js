@@ -1,6 +1,6 @@
 const os = require("os");
 
-const Binary = require("./_binary");
+const Binary = require("ts-binary-install");
 
 const getPlatform = () => {
   const type = os.type();
