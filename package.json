@@ -1,8 +1,8 @@
 {
   "name": "vsr-new",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "description": "Boilerplate for different type of projects",
-  "main": "index.js",
+  "main": "./npm/execute.js",
   "author": "jmacazana <jhonatan.macazana@utec.edu.pe>",
   "license": "MIT",
   "keywords": [

@@ -9,7 +9,9 @@ const { install, run, uninstall } = require("./binary");
     run();
   } else {
     await install();
-    setTimeout(run, 3000);
-    uninstall();
+    setTimeout(() => {
+      run();
+      uninstall();
+    }, 3000);
   }
 })();
