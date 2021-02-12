@@ -1,5 +1,4 @@
 const os = require("os");
-
 const Binary = require("ts-binary-install");
 
 const getPlatform = () => {
@@ -19,6 +18,7 @@ const getBinary = () => {
   const platform = getPlatform();
   const version = require("../package.json").version;
   const url = `https://github.com/jhonatanmacazana/vsr-new/releases/download/v${version}/vsr-new-${platform}.tar.gz`;
+
   const binary = new Binary(url, { name: "vsr-new" });
 
   return binary;

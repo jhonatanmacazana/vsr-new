@@ -1,6 +1,6 @@
 {
   "name": "vsr-new",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "description": "Boilerplate for different type of projects",
   "main": "index.js",
   "author": "jmacazana <jhonatan.macazana@utec.edu.pe>",
@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "is-installed-globally": "^0.4.0",
-    "ts-binary-install": "^0.0.1"
+    "ts-binary-install": "^0.0.2"
   },
   "files": [
     "npm/**"
